@@ -36,7 +36,27 @@ path, _ = os.path.split(os.path.abspath(__file__))
 class CrudClients(ICrud):
     def create(self):
         validar = Valida()
-        pass
+        borrarPantalla()
+        print('\033c', end = '')
+        gotoxy(2,1);print(green_color + "*" * 90 + reset_color)
+        gotoxy(30,2);print(blue_color + "Registro de Clientes")
+        #gotoxy(17,3);print(blue_color + Company.get_business_name()) # Muestra nombre de la empresa
+
+        gotoxy(5,4);print("Nombre: ")
+        name = validar.solo_letras("Error: Solo letras" , 13, 4)
+        gotoxy(5,5);print("Apellido: ")
+        lastname = validar.solo_letras("Error: Solo letras" , 13, 5)
+        gotoxy(5,6);print("DNI: ")
+        dni = validar.solo_numeros("Error: Solo números", 13, 6)
+
+        new_client = {"nombre": name, "apellido": lastname, "dni": dni}
+
+        json_file = JsonFile(path + '/archivos/clients.json')
+        clients = json_file.read()
+        clients.append(new_client)
+        json_file.save(clients)
+
+        gotoxy(5,8);print("Cliente grabado con éxito")
 
     def update():
         pass
@@ -192,10 +212,11 @@ while opc != '4':
         opc1 = ''
         while opc1 != '5':
             borrarPantalla()
+            client = CrudClients()
             menu_clients = Menu("Menu Cientes",["1) Ingresar","2) Actualizar","3) Eliminar","4) Consultar","5) Salir"],20,10)
             opc1 = menu_clients.menu()
             if opc1 == "1":
-                pass
+                client.create()
             elif opc1 == "2":
                 pass
             elif opc1 == "3":
