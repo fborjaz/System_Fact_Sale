@@ -1,7 +1,7 @@
 class Company:
     next = 0  # Variable de clase(estatica) para almacenar el próximo ID disponible
     # meetodo constructor que s eejecuta cuando se instancia la clase
-    def __init__(self, name="SuperMaxi", ruc="0943213456001"):
+    def __init__(self, name = "SuperMaxi", ruc = "0943213456001"):
         # Incrementa el contador de ID para cada nueva instancia
         Company.next += 1
         # variables de instancias
@@ -18,7 +18,7 @@ class Company:
     
     @staticmethod
     def get_business_name():
-        return f"Empresa:Corporacion el Rosado ruc:0876543294001"
+        return f"Empresa: Corporacion el Rosado ruc: 0876543294001"
         
 if __name__ == '__main__':
     # Se ejecuta solo si este script es el principal
