@@ -43,9 +43,9 @@ class CrudClients(ICrud):
         #gotoxy(17,3);print(blue_color + Company.get_business_name()) # Muestra nombre de la empresa
 
         gotoxy(5,4);print("Nombre: ")
-        name = validar.solo_letras("Error: Solo letras" , 13, 4)
+        name = validar.solo_letras("Error: Solo letras", 13, 4)
         gotoxy(5,5);print("Apellido: ")
-        lastname = validar.solo_letras("Error: Solo letras" , 13, 5)
+        lastname = validar.solo_letras("Error: Solo letras", 13, 5)
         gotoxy(5,6);print("DNI: ")
         dni = validar.solo_numeros("Error: Solo números", 13, 6)
 
@@ -58,8 +58,34 @@ class CrudClients(ICrud):
 
         gotoxy(5,8);print("Cliente grabado con éxito")
 
-    def update():
-        pass
+    def update(self):
+        validar = Valida()
+        borrarPantalla()
+        print('\033c', end = '')
+        gotoxy(2,1);print(green_color + "*" * 90 + reset_color)
+        gotoxy(30,2);print(blue_color + "Actualización de Clientes")
+        gotoxy(5,4);print("Ingrese el DNI del cliente a actualizar: ")
+        dni = validar.solo_numeros("Error: Solo números", 40, 4)
+
+        json_file = JsonFile(path + '/archivos/clients.json')
+        client_list = json_file.read()
+        found = False
+
+        for client in client_list:
+            if client['dni'] == dni:
+                found = True
+                gotoxy(5,5);print("Nombre: ")
+                new_name = validar.solo_letras("Error: Solo letras", 13, 5)
+                gotoxy(5,6);print("Apellido: ")
+                new_lastname = validar.solo_letras("Error: Solo letras", 13, 6)
+                client['nombre'] = new_name
+                client['apellido'] = new_lastname
+                json_file.save(client_list)
+                gotoxy(5,8);print("Cliente actualizado con éxito")
+                break
+        if not found:
+            print("Cliente no encontrado.")
+
 
     def delete():
         pass
@@ -218,7 +244,7 @@ while opc != '4':
             if opc1 == "1":
                 client.create()
             elif opc1 == "2":
-                pass
+                client.update()
             elif opc1 == "3":
                 pass
             elif opc1 == "4":
