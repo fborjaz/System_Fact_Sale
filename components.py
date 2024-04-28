@@ -27,7 +27,7 @@ class Valida:
     def solo_numeros(self, mensajeError, col, fil):
         while True:
             gotoxy(col, fil)
-            valor = input()
+            valor = input("        ------>   | {} ".format("Ingrese solo números: "))
             try:
                 if int(valor) > 0:
                     break
@@ -39,18 +39,23 @@ class Valida:
                 print(" " * 20)
         return valor
 
-    def solo_letras(self, mensaje, mensajeError):
+    def solo_letras(self, mensajeError, col, fil):
         while True:
-            valor = str(input("          ------>   | {} ".format(mensaje)))
+            gotoxy(col, fil)
+            valor = input("         ------>   | {} ".format("Ingrese solo letra: "))
             if valor.isalpha():
                 break
             else:
-                print("          ------><  | {} ".format(mensajeError))
+                gotoxy(col, fil)
+                print(mensajeError)
+                time.sleep(1)
+                gotoxy(col, fil)
+                print(" " * 20)
         return valor
 
     def solo_decimales(self, mensaje, mensajeError):
         while True:
-            valor = str(input("          ------>   | {} ".format(mensaje)))
+            valor = input("          ------>   | {} ".format(mensaje))
             try:
                 valor = float(valor)
                 if valor > float(0):
