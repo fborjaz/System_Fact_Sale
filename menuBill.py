@@ -125,8 +125,60 @@ class CrudClients(ICrud):
         if not found:
             print("Cliente no encontrado.")
 
-    def consult():
-        pass
+    def consult(self):
+        borrarPantalla()
+        print('\033c', end='')
+        gotoxy(2, 1);
+        print(green_color + "*" * 90 + reset_color)
+        gotoxy(30, 2);
+        print(blue_color + "Consulta de Clientes")
+        print("\n")
+        print("Seleccione una opción:")
+        print("1) Buscar cliente por DNI")
+        print("2) Ver todos los clientes")
+
+        opcion = input("Ingrese su opción (1 o 2): ")
+
+        if opcion == "1":
+            validar = Valida()
+            borrarPantalla()
+            print('\033c', end='')
+            gotoxy(2, 1);
+            print(green_color + "*" * 90 + reset_color)
+            gotoxy(30, 2);
+            print(blue_color + "Consulta de Cliente por DNI")
+            print("\n")
+            dni = validar.solo_numeros("Ingrese el DNI del cliente a buscar: ", 5, 4)
+
+            json_file = JsonFile(path + '/archivos/clients.json')
+            clients = json_file.read()
+            found = False
+            for client in clients:
+                if client['dni'] == dni:
+                    found = True
+                    print("Cliente encontrado:")
+                    print(f"Nombre: {client['nombre']} | Apellido: {client['apellido']} | DNI: {client['dni']}")
+                    break
+            if not found:
+                print("Cliente no encontrado.")
+
+        elif opcion == "2":
+            borrarPantalla()
+            print('\033c', end='')
+            gotoxy(2, 1);
+            print(green_color + "*" * 90 + reset_color)
+            gotoxy(30, 2);
+            print(blue_color + "Lista de Todos los Clientes")
+            print("\n")
+            json_file = JsonFile(path + '/archivos/clients.json')
+            clients = json_file.read()
+            print("Lista de Clientes:")
+            for idx, client in enumerate(clients):
+                gotoxy(5, 4 + idx);
+                print(f"Nombre: {client['nombre']} | Apellido: {client['apellido']} | DNI: {client['dni']}")
+
+        else:
+            print("Opción no válida.")
 
 # Proceso de Productos
 class CrudProducts(ICrud):
@@ -283,7 +335,8 @@ while opc != '4':
             elif opc1 == "3":
                 client.delete()
             elif opc1 == "4":
-                pass
+                client.consult()
+                time.sleep(2)
             print("Regresando al menu Clientes...")
             # time.sleep(2)
     # Menu de Productos
