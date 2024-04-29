@@ -64,6 +64,7 @@ class CrudClients(ICrud):
         print('\033c', end = '')
         gotoxy(2,1);print(green_color + "*" * 90 + reset_color)
         gotoxy(30,2);print(blue_color + "Actualización de Clientes")
+
         gotoxy(5,4);print("Ingrese el DNI del cliente a actualizar: ")
         dni = validar.solo_numeros("Error: Solo números", 40, 4)
 
@@ -76,8 +77,10 @@ class CrudClients(ICrud):
                 found = True
                 gotoxy(5,5);print("Nombre: ")
                 new_name = validar.solo_letras("Error: Solo letras", 13, 5)
+
                 gotoxy(5,6);print("Apellido: ")
                 new_lastname = validar.solo_letras("Error: Solo letras", 13, 6)
+
                 client['nombre'] = new_name
                 client['apellido'] = new_lastname
                 json_file.save(client_list)
@@ -92,36 +95,32 @@ class CrudClients(ICrud):
         print('\033c', end='')
         gotoxy(2, 1)
         print(green_color + "*" * 90 + reset_color)
-        gotoxy(30, 2)
-        print(blue_color + "Eliminación de Clientes")
-        gotoxy(5, 4)
-        print("Ingrese el DNI del cliente a eliminar: ")
+        gotoxy(30, 2);print(blue_color + "Eliminación de Clientes")
+
+        gotoxy(5, 4);print("Ingrese el DNI del cliente a eliminar: ")
         dni = validar.solo_numeros("Error: Solo números", 40, 4)
 
         json_file = JsonFile(path + '/archivos/clients.json')
         clients = json_file.read()
         found = False
+
         for client in clients:
             if client['dni'] == dni:
                 found = True
-                gotoxy(5, 6)
-                print("¿Está seguro de eliminar este cliente? (SI/NO): ")
+                gotoxy(5, 6);print("¿Está seguro de eliminar este cliente? (S/N): ")
                 confirmacion = input().lower()
-                if confirmacion == "si":
-                    gotoxy(5, 7)
-                    print("Escriba 'ELIMINAR' para confirmar: ")
+                if confirmacion == "s":
+                    gotoxy(5, 7);print("Escriba 'ELIMINAR' para confirmar: ")
                     confirmacion_final = input().lower()
+
                     if confirmacion_final == "eliminar":
                         del clients[clients.index(client)]
                         json_file.save(clients)
-                        gotoxy(5, 9)
-                        print("Cliente eliminado con éxito")
+                        gotoxy(5, 9);print("Cliente eliminado con éxito")
                     else:
-                        gotoxy(5, 9)
-                        print("Confirmación incorrecta. No se ha eliminado el cliente.")
+                        gotoxy(5, 9);print("Confirmación incorrecta. No se ha eliminado el cliente.")
                 else:
-                    gotoxy(5, 9)
-                    print("Operación cancelada.")
+                    gotoxy(5, 9);print("Operación cancelada.")
                 break
         if not found:
             print("Cliente no encontrado.")
