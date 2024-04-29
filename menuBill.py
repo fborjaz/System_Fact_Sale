@@ -86,8 +86,45 @@ class CrudClients(ICrud):
         if not found:
             print("Cliente no encontrado.")
 
-    def delete():
-        pass
+    def delete(self):
+        validar = Valida()
+        borrarPantalla()
+        print('\033c', end='')
+        gotoxy(2, 1)
+        print(green_color + "*" * 90 + reset_color)
+        gotoxy(30, 2)
+        print(blue_color + "Eliminación de Clientes")
+        gotoxy(5, 4)
+        print("Ingrese el DNI del cliente a eliminar: ")
+        dni = validar.solo_numeros("Error: Solo números", 40, 4)
+
+        json_file = JsonFile(path + '/archivos/clients.json')
+        clients = json_file.read()
+        found = False
+        for client in clients:
+            if client['dni'] == dni:
+                found = True
+                gotoxy(5, 6)
+                print("¿Está seguro de eliminar este cliente? (SI/NO): ")
+                confirmacion = input().lower()
+                if confirmacion == "si":
+                    gotoxy(5, 7)
+                    print("Escriba 'ELIMINAR' para confirmar: ")
+                    confirmacion_final = input().lower()
+                    if confirmacion_final == "eliminar":
+                        del clients[clients.index(client)]
+                        json_file.save(clients)
+                        gotoxy(5, 9)
+                        print("Cliente eliminado con éxito")
+                    else:
+                        gotoxy(5, 9)
+                        print("Confirmación incorrecta. No se ha eliminado el cliente.")
+                else:
+                    gotoxy(5, 9)
+                    print("Operación cancelada.")
+                break
+        if not found:
+            print("Cliente no encontrado.")
 
     def consult():
         pass
@@ -245,7 +282,7 @@ while opc != '4':
             elif opc1 == "2":
                 client.update()
             elif opc1 == "3":
-                pass
+                client.delete()
             elif opc1 == "4":
                 pass
             print("Regresando al menu Clientes...")
