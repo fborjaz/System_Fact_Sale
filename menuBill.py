@@ -1,16 +1,17 @@
 import os.path as path
+import json
+import datetime
+import time
+import os
+from functools import reduce
 from components import Menu, Valida
-from utilities import borrarPantalla, gotoxy
-from utilities import reset_color, red_color, green_color, yellow_color, blue_color, purple_color, cyan_color
+from utilities import borrarPantalla, gotoxy, reset_color, red_color, green_color, yellow_color, blue_color, purple_color, cyan_color
 from clsJson import JsonFile
 from company import Company
 from customer import RegularClient
 from sales import Sale
 from product import Product
 from iCrud import ICrud
-import datetime
-import time, os
-from functools import reduce
 
 # Validación de comparación de existencia de archivo JSON.
 # Validar la existencia de archivos
@@ -183,7 +184,38 @@ class CrudClients(ICrud):
 # Proceso de Productos
 class CrudProducts(ICrud):
     def create(self):
-        pass
+        validar = Valida()
+        borrarPantalla()
+        print('\033c', end='')
+        gotoxy(2, 1);print(green_color + "*" * 90 + reset_color)
+        gotoxy(30, 2);print(blue_color + "Registro de Productos")
+
+        # Leer la lista actual de productos del archivo products.json
+        with open('archivos/products.json', 'r') as file:
+            products = json.load(file)
+
+        # Obtener el ID más alto de la lista actual de productos
+        highest_id = max(products, key=lambda x: x['id'])['id'] if products else 0
+
+        # Incrementar el ID más alto en uno para asignar al nuevo producto
+        new_product_id = highest_id + 1
+
+        gotoxy(5, 4);print("Descripción: ");description = validar.solo_letras("Ingrese la descripción del producto: ", 13, 4)
+
+        gotoxy(5, 5);print("Precio: ");price = validar.solo_decimales("Ingrese el precio del producto: ", "Error: Solo números decimales")
+
+        gotoxy(5, 6);print("Stock: ");stock = validar.solo_numeros("Ingrese el stock del producto: ", 13, 6)
+
+        new_product = {"id": new_product_id, "descripcion": description, "precio": price, "stock": stock}
+
+        # Agregar el nuevo producto a la lista
+        products.append(new_product)
+
+        # Guardar la lista actualizada de productos en el archivo products.json
+        with open('archivos/products.json', 'w') as file:
+            json.dump(products, file)
+
+        gotoxy(5, 8);print("Producto registrado con éxito")
 
     def update(self):
         pass
@@ -273,10 +305,10 @@ class CrudSales(ICrud):
             gotoxy(20,10+line);print("🤣 Venta Cancelada 🤣" +reset_color)
         time.sleep(2)
 
-    def update():
+    def update(self):
         pass
 
-    def delete():
+    def delete(self):
         pass
 
     # Consulta de ventas
@@ -326,7 +358,7 @@ while opc != '4':
         while opc1 != '5':
             borrarPantalla()
             client = CrudClients()
-            menu_clients = Menu("Menu Cientes",["1) Ingresar","2) Actualizar","3) Eliminar","4) Consultar","5) Salir"],20,10)
+            menu_clients = Menu("Menu Clientes",["1) Ingresar","2) Actualizar","3) Eliminar","4) Consultar","5) Salir"],20,10)
             opc1 = menu_clients.menu()
             if opc1 == "1":
                 client.create()
@@ -344,10 +376,11 @@ while opc != '4':
         opc2 = ''
         while opc2 != '5':
             borrarPantalla()
+            Products = CrudProducts()
             menu_products = Menu("Menu Productos",["1) Ingresar","2) Actualizar","3) Eliminar","4) Consultar","5) Salir"],20,10)
             opc2 = menu_products.menu()
             if opc2 == "1":
-                pass
+                Products.create()
             elif opc2 == "2":
                 pass
             elif opc2 == "3":
@@ -355,31 +388,24 @@ while opc != '4':
             elif opc2 == "4":
                 pass
             print("Regresando al menu Productos...")
-            # time.sleep(2)
+            time.sleep(2)
     # Menu de Ventas
     elif opc == "3":
         opc3 = ''
         while opc3 != '5':
             borrarPantalla()
             sales = CrudSales()
-            menu_sales = Menu("Menu Ventas",["1) Registro Venta","2) Consultar","3) Modificar","4) Eliminar","5) Salir"],20,10)
+            menu_sales = Menu("Menu Ventas",["1) Ingresar","2) Actualizar","3) Eliminar","4) Consultar","5) Salir"],20,10)
             opc3 = menu_sales.menu()
             if opc3 == "1":
                 sales.create()
             elif opc3 == "2":
-                sales.consult()
-                time.sleep(2)
+                pass
             elif opc3 == "3":
                 pass
             elif opc3 == "4":
-                pass
+                sales.consult()
             print("Regresando al menu Ventas...")
-            # time.sleep(2)
-
-    print("Regresando al menu Principal...")
-    # time.sleep(2)
-
-borrarPantalla()
-input("Presione una tecla para salir...")
-borrarPantalla()
+            time.sleep(2)
+print("Gracias por su visita...")
 
