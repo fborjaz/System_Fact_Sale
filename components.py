@@ -10,16 +10,15 @@ class Menu:
         self.col = col
         self.fil = fil
 
-    def menu(self):
+    def mostrar_menu(self):
         gotoxy(self.col, self.fil)
         print(self.titulo)
-        self.col -= 5
         for opcion in self.opciones:
             self.fil += 1
             gotoxy(self.col, self.fil)
             print(opcion)
         gotoxy(self.col + 5, self.fil + 2)
-        opc = input(f"Elija opcion[1...{len(self.opciones)}]: ")
+        opc = input(f"Elija una opción [1...{len(self.opciones)}]: ")
         return opc
 
 
@@ -31,7 +30,7 @@ class Valida:
             try:
                 if int(valor) > 0:
                     break
-            except:
+            except ValueError:
                 gotoxy(col, fil)
                 print(mensajeError)
                 time.sleep(1)
@@ -60,35 +59,26 @@ class Valida:
                 valor = float(valor)
                 if valor > float(0):
                     break
-            except:
+            except ValueError:
                 print("          ------><  | {} ".format(mensajeError))
         return valor
 
-    def cedula():
+    def cedula(self):
         pass
 
 
-class otra:
-    pass
-
-
 if __name__ == '__main__':
-    # instanciar el menu
     opciones_menu = ["1. Entero", "2. Letra", "3. Decimal"]
     menu = Menu(titulo="-- Mi Menú --", opciones=opciones_menu, col=10, fil=5)
-    # llamada al menu
-    opcion_elegida = menu.menu()
+    opcion_elegida = menu.mostrar_menu()
     print("Opción escogida:", opcion_elegida)
     valida = Valida()
-    if (opciones_menu == 1):
+    if opcion_elegida == "1":
         numero_validado = valida.solo_numeros("Mensaje de error", 10, 10)
         print("Número validado:", numero_validado)
-
-    numero_validado = valida.solo_numeros("Mensaje de error", 10, 10)
-    print("Número validado:", numero_validado)
-
-    letra_validada = valida.solo_letras("Ingrese una letra:", "Mensaje de error")
-    print("Letra validada:", letra_validada)
-
-    decimal_validado = valida.solo_decimales("Ingrese un decimal:", "Mensaje de error")
-    print("Decimal validado:", decimal_validado)
+    elif opcion_elegida == "2":
+        letra_validada = valida.solo_letras("Ingrese una letra:", "Mensaje de error")
+        print("Letra validada:", letra_validada)
+    elif opcion_elegida == "3":
+        decimal_validado = valida.solo_decimales("Ingrese un decimal:", "Mensaje de error")
+        print("Decimal validado:", decimal_validado)
