@@ -10,7 +10,7 @@ class Menu:
         self.col = col
         self.fil = fil
 
-    def mostrar_menu(self):
+    def menu(self):
         gotoxy(self.col, self.fil)
         print(self.titulo)
         for opcion in self.opciones:
