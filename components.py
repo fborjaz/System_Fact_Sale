@@ -2,6 +2,7 @@
 
 from utilities import gotoxy
 import time
+import math
 
 class Menu:
     def __init__(self, titulo = "", opciones = [], col = 6, fil = 1):
@@ -63,8 +64,39 @@ class Valida:
                 print("          ------><  | {} ".format(mensajeError))
         return valor
 
-    def cedula(self):
-        pass
+    def cedula(self, mensajeError, col, fil):
+        while True:
+            gotoxy(col, fil)
+            cedula = input("        ------>   | {} ".format("Ingrese cédula: "))
+            if Valida.validar_cedula(cedula):
+                break
+            else:
+                gotoxy(col, fil)
+                print(mensajeError)
+                time.sleep(1)
+                gotoxy(col, fil)
+                print(" " * 20)
+        return cedula
+
+    @staticmethod
+    def validar_cedula(cedula):
+        if len(cedula) != 10:
+            return False
+        else:
+            multiplicador = [2, 1, 2, 1, 2, 1, 2, 1, 2]
+            ced_array = list(map(lambda k: int(k), list(cedula)))[0:9]
+            ultimo_digito = int(cedula[9])
+            resultado = []
+            arr = map(lambda x, j: (x, j), ced_array, multiplicador)
+            for (i, j) in arr:
+                if i * j < 10:
+                    resultado.append(i * j)
+                else:
+                    resultado.append((i * j)-9)
+            if ultimo_digito == int(math.ceil(float(sum(resultado)) / 10) * 10) - sum(resultado):
+                return True
+            else:
+                return False
 
 
 if __name__ == '__main__':
