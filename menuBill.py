@@ -4,6 +4,7 @@ import datetime
 import time
 import os
 import math
+import platform
 from functools import reduce
 from components import Menu, Valida
 from utilities import borrarPantalla, gotoxy, reset_color, red_color, green_color, yellow_color, blue_color, purple_color, cyan_color
@@ -595,7 +596,143 @@ class CrudSales(ICrud):
         time.sleep(2)
 
     def update(self):
-        pass
+        validar = Valida()
+        borrarPantalla()
+        print('\033c', end='')
+        gotoxy(2, 1)
+        print(green_color + "*" * 90 + reset_color)
+        gotoxy(30, 2)
+        print(blue_color + "Actualización de Venta")
+
+        gotoxy(5, 4)
+        invoice_number = Valida.validar_numeros("Ingrese el número de factura que desea actualizar: ", 2, 6, 53, 6)
+        invoice_number = int(invoice_number)
+
+        json_file = JsonFile(path + '/archivos/invoices.json')
+        invoices = json_file.read()
+
+        if invoices:
+            found = False
+            for invoice in invoices:
+                if invoice["factura"] == invoice_number:
+                    found = True
+                    while True:
+                        os.system('cls' if os.name == 'nt' else 'clear')  # Borra la pantalla
+
+                        # Imprime el encabezado y la información de la factura
+                        gotoxy(2, 1)
+                        print(green_color + "=" * 90 + reset_color)
+                        gotoxy(30, 2)
+                        print(blue_color + "Actualización de Venta")
+                        gotoxy(2, 3)
+                        print(green_color + "=" * 90 + reset_color)
+                        gotoxy(2, 4)
+                        print(blue_color + "Empresa: " + purple_color + "Corporación el Rosado")
+                        gotoxy(60, 4)
+                        print(blue_color + "RUC:" + purple_color + "1790097870001")
+                        gotoxy(2, 5)
+                        gotoxy(2, 7)
+                        print(green_color + "=" * 90 + reset_color)
+                        gotoxy(2, 8)
+                        print(blue_color + "Número de Factura: " + purple_color + f"{invoice['factura']}")
+                        print(blue_color + "Fecha:" + purple_color + f"{invoice['Fecha']}")
+                        print(blue_color + "Cliente:" + purple_color + f"{invoice['cliente']}")
+                        print(blue_color + "Total:" + purple_color + f"{invoice['total']}")
+                        gotoxy(2, 12)
+                        print("\nDetalle de la Venta:")
+                        detalles = invoice['detalle']
+                        print(f"{blue_color +'num'.center(5)} {blue_color + 'Producto'.center(28)} {blue_color + 'Cantidad'.center(15)} {blue_color + 'Precio'.center(13)}")
+                        for i, detalle in enumerate(detalles, start=1):
+                            print(purple_color + f" {i}) {detalle['poducto'].center(28)} {str(detalle['cantidad']).center(10)} x {str(detalle['precio']).center(10)}")
+                        print(green_color + "=" * 90 + reset_color)
+                        gotoxy(2, 20), print(blue_color + "\nOpciones:")
+                        print("1. Modificar cantidad de un producto")
+                        print("2. Eliminar un producto")
+                        print("3. Agregar un nuevo producto")
+                        print("4. Terminar actualización")
+                        option = Valida.validar_numeros("Seleccione una opción: ", 2, 26, 25, 26)
+
+                        if option == "1":
+                            # Modificar cantidad de un producto en la factura
+                            detalle_index = int(validar.validar_numeros("Ingrese el número de línea del detalle que desea modificar: ", 2, 27, 62, 27)) - 1
+                            if 0 <= detalle_index < len(detalles):
+                                new_quantity = int(validar.validar_numeros("Ingrese la nueva cantidad: ", 2, 28, 29, 28))
+                                detalles[detalle_index]['cantidad'] = new_quantity
+                                # Recalcular el total de la factura
+                                invoice['total'] = sum(item['cantidad'] * item['precio'] for item in detalles)
+                                print(green_color + "=" * 90 + reset_color)
+                                gotoxy(4, 30)
+                                print(blue_color + "Cantidad modificada correctamente.")
+                                gotoxy(4, 31)
+                                input("Presione Enter para continuar...")
+                            else:
+                                print("Número de línea inválido.")
+                                input("Presione Enter para continuar...")
+                        elif option == "2":
+                            # Eliminar un producto de la factura
+                            detalle_index = int(Valida.validar_numeros("Ingrese el número de línea del detalle que desea eliminar: ",2, 27,62,27)) - 1
+                            if 0 <= detalle_index < len(detalles):
+                                del detalles[detalle_index]
+                                # Recalcular el total de la factura
+                                invoice['total'] = sum(item['cantidad'] * item['precio'] for item in detalles)
+                                print(green_color + "=" * 90 + reset_color)
+                                gotoxy(3, 29)
+                                print(blue_color + "Producto eliminado correctamente.")
+                                gotoxy(4, 30)
+                                input("Presione Enter para continuar...")
+                            else:
+                                print("Número de línea inválido.")
+                                input("Presione Enter para continuar...")
+                        elif option == "3":
+                            # Agregar un nuevo producto a la factura
+                            product_id = int(Valida.validar_numeros("Ingrese el ID del nuevo producto: ", 2, 27, 35, 27))
+                            product_quantity = int(Valida.validar_numeros("Ingrese la cantidad del nuevo producto: ", 2, 28, 42, 28))
+                            product_details = self.find_product_details(product_id)
+                            if product_details:
+                                new_product = {
+                                    'poducto': product_details['descripcion'],
+                                    'precio': product_details['precio'],
+                                    'cantidad': product_quantity
+                                }
+                                detalles.append(new_product)
+                                # Recalcular el total de la factura
+                                invoice['total'] = sum(item['cantidad'] * item['precio'] for item in detalles)
+                                print("Producto agregado correctamente.")
+                                input("Presione Enter para continuar...")
+                            else:
+                                print("Producto no encontrado.")
+                                input("Presione Enter para continuar...")
+                        elif option == "4":
+                            print("Actualización de factura terminada.")
+                            # Guardar los cambios en el archivo JSON
+                            invoice['detalle'] = detalles
+                            for index, inv in enumerate(invoices):
+                                if inv["factura"] == invoice_number:
+                                    invoices[index] = invoice
+                                    break
+                            json_file.save(invoices)
+                            break
+                        else:
+                            print("Opción inválida. Intente nuevamente.")
+                            input("Presione Enter para continuar...")
+                    break
+
+            if not found:
+                print("Factura no encontrada.")
+                input("Presione Enter para regresar al menú principal")
+        else:
+            print("No hay facturas disponibles.")
+            input("Presione Enter para regresar al menú principal")
+
+    def find_product_details(self, product_id):
+        # Cargar los datos de productos desde el archivo JSON
+        json_file = JsonFile(path + '/archivos/products.json')
+        products = json_file.read()
+        # Buscar el producto por su ID
+        for product in products:
+            if product.get("id") == product_id:
+                return product  # Devolver detalles del producto encontrado
+        return None  # Devolver None si el producto no se encuentra
 
     def delete(self):
         pass
@@ -690,7 +827,7 @@ while opc != '4':
             if opc3 == "1":
                 sales.create()
             elif opc3 == "2":
-                pass
+                sales.update()
             elif opc3 == "3":
                 pass
             elif opc3 == "4":
