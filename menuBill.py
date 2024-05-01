@@ -466,80 +466,139 @@ class CrudProducts(ICrud):
 # Clase de registro de ventas
 class CrudSales(ICrud):
     def create(self):
-        # cabecera de la venta
+        # Cabecera de la venta
         validar = Valida()
         borrarPantalla()
-        print('\033c', end = '')
-        gotoxy(2,1);print(green_color + "*" * 90 + reset_color)
-        gotoxy(30,2);print(blue_color + "Registro de Venta")
-        gotoxy(17,3);print(blue_color + Company.get_business_name())
-        gotoxy(5,4);print(f"Factura#:F0999999 {' ' * 3} Fecha:{datetime.datetime.now()}")
-        gotoxy(66,4);print("Subtotal:")
-        gotoxy(66,5);print("Decuento:")
-        gotoxy(66,6);print("Iva     :")
-        gotoxy(66,7);print("Total   :")
-        gotoxy(15,6);print("Cedula:")
-        dni = validar.solo_numeros("Error: Solo numeros",23,6)
+        print('\033c', end='')
+        gotoxy(2, 1);
+        print(green_color + "*" * 90 + reset_color)
+        gotoxy(30, 2);
+        print(blue_color + "Registro de Venta")
+        gotoxy(17, 3);
+        print(blue_color + Company.get_business_name())
+        gotoxy(5, 4);
+        print(f"Factura#:F0999999 {' ' * 3} Fecha:{datetime.datetime.now()}")
+        gotoxy(66, 4);
+        print("Subtotal:")
+        gotoxy(66, 5);
+        print("Descuento:")
+        gotoxy(66, 6);
+        print("IVA     :")
+        gotoxy(66, 7);
+        print("Total   :")
+        gotoxy(15, 6);
+        print("Cedula:")
+        dni = validar.solo_numeros("Error: Solo números", 23, 6)
+
+        # Validar existencia de cliente
         json_file = JsonFile(path + '/archivos/clients.json')
-        client = json_file.find("dni",dni)
+        client = json_file.find("dni", dni)
         if not client:
-            gotoxy(35,6);print("Cliente no existe")
+            gotoxy(35, 6);
+            print("Cliente no existe")
             return
         client = client[0]
-        cli = RegularClient(client["nombre"],client["apellido"], client["dni"], card = True)
+        cli = RegularClient(client["nombre"], client["apellido"], client["dni"], card=True)
         sale = Sale(cli)
-        gotoxy(35,6);print(cli.fullName())
-        gotoxy(2,8);print(green_color + "*" * 90 + reset_color)
-        gotoxy(5,9);print(purple_color + "Linea")
-        gotoxy(12,9);print("Id_Articulo")
-        gotoxy(24,9);print("Descripcion")
-        gotoxy(38,9);print("Precio")
-        gotoxy(48,9);print("Cantidad")
-        gotoxy(58,9);print("Subtotal")
-        gotoxy(70,9);print("n-> Terminar Venta)" + reset_color)
-        # detalle de la venta
+        gotoxy(35, 6);
+        print(cli.fullName())
+        gotoxy(2, 8);
+        print(green_color + "*" * 90 + reset_color)
+        gotoxy(5, 9);
+        print(purple_color + "Línea")
+        gotoxy(12, 9);
+        print("Id_Articulo")
+        gotoxy(24, 9);
+        print("Descripción")
+        gotoxy(38, 9);
+        print("Precio")
+        gotoxy(48, 9);
+        print("Cantidad")
+        gotoxy(58, 9);
+        print("Subtotal")
+        gotoxy(70, 9);
+        print("n->Terminar Venta)" + reset_color)
+
+        # Detalle de la venta
         follow = "s"
         line = 1
         while follow.lower() == "s":
-            gotoxy(7,9 + line);print(line)
-            gotoxy(15,9 + line);
-            id = int(validar.solo_numeros("Error: Solo numeros",15,9 + line))
+            gotoxy(7, 9 + line);
+            print(line)
+            gotoxy(15, 9 + line);
+            id = int(validar.solo_numeros("Error: Solo números", 15, 9 + line))
             json_file = JsonFile(path + '/archivos/products.json')
-            prods = json_file.find("id",id)
+            prods = json_file.find("id", id)
             if not prods:
-                gotoxy(24,9 + line);print("Producto no existe")
+                gotoxy(24, 9 + line);
+                print("Producto no existe")
                 time.sleep(1)
-                gotoxy(24,9 + line);print(" "*20)
+                gotoxy(24, 9 + line);
+                print(" " * 20)
             else:
                 prods = prods[0]
-                product = Product(prods["id"],prods["descripcion"],prods["precio"],prods["stock"])
-                gotoxy(24,9 + line);print(product.descrip)
-                gotoxy(38,9 + line);print(product.preci)
-                gotoxy(49,9 + line);qyt = int(validar.solo_numeros("Error:Solo numeros",49,9 + line))
-                gotoxy(59,9 + line);print(product.preci*qyt)
-                sale.add_detail(product,qyt)
-                gotoxy(76,4);print(round(sale.subtotal,2))
-                gotoxy(76,5);print(round(sale.discount,2))
-                gotoxy(76,6);print(round(sale.iva,2))
-                gotoxy(76,7);print(round(sale.total,2))
-                gotoxy(74,9 + line);follow =  input() or "s"
-                gotoxy(76,9 + line);print(green_color + "✔" + reset_color)
+                product = Product(prods["id"], prods["descripcion"], prods["precio"], prods["stock"])
+                gotoxy(24, 9 + line);
+                print(product.descrip)
+                gotoxy(38, 9 + line);
+                print(product.preci)
+
+                # Solicitar cantidad del producto
+                qyt = int(validar.solo_numeros("Error: Solo números", 49, 9 + line))
+
+                # Validar cantidad disponible
+                if int(product.stock) < qyt:
+                    gotoxy(49, 9 + line)
+                    print("Cantidad insuficiente")
+                    time.sleep(1)
+                    gotoxy(49, 9 + line)
+                    print(" " * 20)
+                    continue
+
+                gotoxy(24, 9 + line);
+                print(product.descrip)
+                gotoxy(38, 9 + line);
+                print(product.preci)
+                gotoxy(49, 9 + line);
+                print(qyt)
+                gotoxy(59, 9 + line);
+                print(product.preci * qyt)
+                sale.add_detail(product, qyt)
+                gotoxy(76, 4);
+                print(round(sale.subtotal, 2))
+                gotoxy(76, 5);
+                print(round(sale.discount, 2))
+                gotoxy(76, 6);
+                print(round(sale.iva, 2))
+                gotoxy(76, 7);
+                print(round(sale.total, 2))
+                gotoxy(74, 9 + line);
+                follow = input() or "s"
+                gotoxy(76, 9 + line);
+                print(green_color + "✔" + reset_color)
                 line += 1
-        gotoxy(15,9 + line);print(red_color + "Esta seguro de grabar la venta(s/n):")
-        gotoxy(54,9 + line);procesar = input().lower()
+
+        # Confirmar la venta
+        gotoxy(15, 9 + line);
+        print(red_color + "¿Está seguro de grabar la venta (s/n)?:")
+        gotoxy(54, 9 + line);
+        procesar = input().lower()
         if procesar == "s":
-            gotoxy(15,10 + line);print("😊 Venta Grabada satisfactoriamente 😊" + reset_color)
+            gotoxy(15, 10 + line);
+            print("😊 Venta grabada satisfactoriamente 😊" + reset_color)
             # print(sale.getJson())
             json_file = JsonFile(path + '/archivos/invoices.json')
             invoices = json_file.read()
-            ult_invoices = invoices[-1]["factura"] + 1
+            ult_invoices = invoices[-1]["factura"] + 1 if invoices else 1
             data = sale.getJson()
             data["factura"] = ult_invoices
             invoices.append(data)
             json_file = JsonFile(path + '/archivos/invoices.json')
             json_file.save(invoices)
         else:
-            gotoxy(20,10+line);print("🤣 Venta Cancelada 🤣" +reset_color)
+            gotoxy(20, 10 + line);
+            print("🤣 Venta cancelada 🤣" + reset_color)
+
         time.sleep(2)
 
     def update(self):
