@@ -1,6 +1,7 @@
 # components.py
 
-from utilities import gotoxy
+from utilities import gotoxy, mensaje
+from utilities import reset_color,red_color,green_color,yellow_color,blue_color,purple_color,cyan_color
 import time
 import math
 
@@ -77,6 +78,21 @@ class Valida:
                 gotoxy(col, fil)
                 print(" " * 20)
         return cedula
+
+    def validar_numeros(frase, col1, fil1, col2, fil2):
+        while True:
+            gotoxy(col1, fil1)
+            print(blue_color + f"{frase}")
+            gotoxy(col2, fil2)
+            numero = input(purple_color)
+            if numero.isdigit():
+                return numero
+            else:
+                gotoxy(col2, fil2)
+                print(purple_color + "El campo solo puede contener números.")
+                time.sleep(1)
+                gotoxy(col2, fil2)
+                print(" " * 40)
 
     @staticmethod
     def validar_cedula(cedula):
