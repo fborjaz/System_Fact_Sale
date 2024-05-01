@@ -3,6 +3,7 @@ import json
 import datetime
 import time
 import os
+import math
 from functools import reduce
 from components import Menu, Valida
 from utilities import borrarPantalla, gotoxy, reset_color, red_color, green_color, yellow_color, blue_color, purple_color, cyan_color
@@ -45,23 +46,17 @@ class CrudClients(ICrud):
         print(blue_color + "Registro de Clientes")
 
         gotoxy(5, 4)
-        print("Nombre: ")
-        name = validar.solo_letras("Error: Solo letras", 13, 4)
+        print("Nombre: ");name = validar.solo_letras("Error: Solo letras", 13, 4)
         gotoxy(5, 5)
-        print("Apellido: ")
-        lastname = validar.solo_letras("Error: Solo letras", 13, 5)
+        print("Apellido: ");lastname = validar.solo_letras("Error: Solo letras", 13, 5)
         gotoxy(5, 6)
-        print("DNI: ")
-        dni = validar.solo_numeros("Error: Solo números", 13, 6)
+        print("DNI: ");dni = validar.cedula("Error: Cédula inválida", 13, 6)
 
-        gotoxy(5, 7)
-        print("Tipo de cliente:")
-        gotoxy(5, 8)
-        print("1) Cliente Regular")
-        gotoxy(5, 9)
-        print("2) Cliente VIP")
-        gotoxy(5, 10)
-        tipo_cliente = validar.solo_numeros("Error: Solo números", 27, 7)
+        gotoxy(5, 7);print("Tipo de cliente:")
+        gotoxy(5, 8);print("1) Cliente Regular")
+        gotoxy(5, 9);print("2) Cliente VIP")
+        gotoxy(5, 10);tipo_cliente = validar.solo_numeros("Error: Solo números", 27, 7)
+
         while tipo_cliente not in {"1", "2"}:
             gotoxy(5, 11)
             print("Opción inválida. Intente de nuevo.")
@@ -82,8 +77,7 @@ class CrudClients(ICrud):
         clients.append(cliente.getJson())
         json_file.save(clients)
 
-        gotoxy(5, 14)
-        print("Cliente registrado exitosamente!")
+        gotoxy(5, 14);print("Cliente registrado exitosamente!")
         input("Presiona Enter para regresar al menú principal")
 
     def update(self):
