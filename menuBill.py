@@ -735,7 +735,51 @@ class CrudSales(ICrud):
         return None  # Devolver None si el producto no se encuentra
 
     def delete(self):
-        pass
+        borrarPantalla()
+        print('\033c', end='')
+        gotoxy(2, 1)
+        print(green_color + "*" * 90 + reset_color)
+        gotoxy(30, 2)
+        print(blue_color + "Eliminación de Venta")
+
+        gotoxy(5, 4)
+        invoice_number = Valida.validar_numeros("Ingrese el número de factura que desea eliminar: ", 2, 6, 53, 6)
+        invoice_number = int(invoice_number)
+
+        json_file = JsonFile(path + '/archivos/invoices.json')
+        invoices = json_file.read()
+
+        if invoices:
+            found = False
+            for index, invoice in enumerate(invoices):
+                if invoice["factura"] == invoice_number:
+                    found = True
+                    confirmation = input("¿Está seguro de que desea eliminar esta factura? (s/n): ").lower()
+                    if confirmation == "s":
+                        confirmacion_final = input(
+                            "Por seguridad, escriba 'ELIMINAR' para confirmar la eliminación: ").lower()
+                        if confirmacion_final == "eliminar":
+                            # Eliminar la factura de la lista
+                            del invoices[index]
+                            # Guardar la lista actualizada en el archivo JSON
+                            json_file.save(invoices)
+                            gotoxy(5, 8)
+                            print("Factura eliminada con éxito.")
+                        else:
+                            gotoxy(5, 8)
+                            print("Eliminación cancelada.")
+                    else:
+                        gotoxy(5, 8)
+                        print("Eliminación cancelada.")
+                    input("Presiona Enter para regresar al menú principal")
+                    break
+            if not found:
+                gotoxy(5, 8)
+                print("Factura no encontrada.")
+                input("\nPresione Enter para regresar al menú principal...")
+        else:
+            print("No hay facturas disponibles.")
+            input("Presione Enter para regresar al menú principal")
 
     # Consulta de ventas
     def consult(self):
@@ -829,7 +873,7 @@ while opc != '4':
             elif opc3 == "2":
                 sales.update()
             elif opc3 == "3":
-                pass
+                sales.delete()
             elif opc3 == "4":
                 sales.consult()
             print("Regresando al menu Ventas...")
