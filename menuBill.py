@@ -218,7 +218,104 @@ class CrudProducts(ICrud):
         gotoxy(5, 8);print("Producto registrado con éxito")
 
     def update(self):
-        pass
+        validar = Valida()
+        borrarPantalla()
+        print('\033c', end='')
+        gotoxy(2, 1)
+        print(green_color + "*" * 90 + reset_color)
+        gotoxy(30, 2)
+        print(blue_color + "Actualización de Productos")
+
+        # Mostrar las opciones para actualizar
+        print("Seleccione una opción:")
+        print("1) Ingresar ID del producto a actualizar")
+        print("2) Ver todos los productos")
+
+        option = input("Ingrese su opción (1 o 2): ")
+
+        # Obtener la lista de productos
+        json_file = JsonFile(path + '/archivos/products.json')
+        products = json_file.read()
+
+        if option == "1":
+            # Ingresar ID del producto a actualizar
+            gotoxy(5, 4)
+            print("Ingrese el ID del producto a actualizar: ")
+            product_id = validar.solo_numeros("Error: Solo números", 45, 4)
+
+            # Convertir el ID ingresado a entero
+            product_id = int(product_id)
+
+            # Buscar el producto por su ID
+            found_product = self.buscar_producto_por_id(products, product_id)
+            if found_product:
+                new_description = input("Ingrese la nueva descripción del producto: ")
+                new_description = validar.solo_letras("Error: Solo letras", 45, 6)  # Validación de solo texto
+                new_price = validar.solo_decimales("Ingrese el nuevo precio del producto: ",
+                                                   "Error: Solo números decimales")
+                new_stock = validar.solo_numeros("Ingrese el nuevo stock del producto: ", 45, 8)
+
+                # Actualizar la información del producto
+                found_product['descripcion'] = new_description
+                found_product['precio'] = new_price
+                found_product['stock'] = new_stock
+
+                json_file.save(products)
+
+                gotoxy(5, 10)
+                print("Producto actualizado con éxito.")
+            else:
+                gotoxy(5, 10)
+                print("Producto no encontrado.")
+
+        elif option == "2":
+            # Mostrar todos los productos con sus IDs
+            print("Lista de Productos:")
+            for idx, product in enumerate(products):
+                gotoxy(5, 4 + idx)
+                print(
+                    f"ID: {product['id']} | Descripción: {product['descripcion']} | Precio: {product['precio']} | Stock: {product['stock']}")
+
+            # Solicitar el ID del producto a actualizar
+            gotoxy(5, len(products) + 5)
+            print("Ingrese el ID del producto a actualizar: ")
+            product_id = validar.solo_numeros("Error: Solo números", 45, len(products) + 5)
+
+            # Convertir el ID ingresado a entero
+            product_id = int(product_id)
+
+            # Buscar el producto por su ID
+            found_product = self.buscar_producto_por_id(products, product_id)
+            if found_product:
+                new_description = input("Ingrese la nueva descripción del producto: ")
+                new_description = validar.solo_letras("Error: Solo letras", 45,
+                                                      len(products) + 6)  # Validación de solo texto
+                new_price = validar.solo_decimales("Ingrese el nuevo precio del producto: ",
+                                                   "Error: Solo números decimales")
+                new_stock = validar.solo_numeros("Ingrese el nuevo stock del producto: ", 45, len(products) + 8)
+
+                # Actualizar la información del producto
+                found_product['descripcion'] = new_description
+                found_product['precio'] = new_price
+                found_product['stock'] = new_stock
+
+                json_file.save(products)
+
+                gotoxy(5, len(products) + 10)
+                print("Producto actualizado con éxito.")
+            else:
+                gotoxy(5, len(products) + 10)
+                print("Producto no encontrado.")
+
+        else:
+            gotoxy(5, 10)
+            print("Opción no válida.")
+
+    def buscar_producto_por_id(self, products, product_id):
+        for product in products:
+            if product['id'] == product_id:
+                return product
+        return None
 
     def delete(self):
         pass
@@ -382,7 +479,7 @@ while opc != '4':
             if opc2 == "1":
                 Products.create()
             elif opc2 == "2":
-                pass
+                Products.update()
             elif opc2 == "3":
                 pass
             elif opc2 == "4":
