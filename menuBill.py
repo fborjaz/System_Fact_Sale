@@ -840,7 +840,7 @@ while opc != '4':
                 client.consult()
                 time.sleep(2)
             print("Regresando al menu Clientes...")
-            # time.sleep(2)
+            time.sleep(2)
     # Menu de Productos
     elif opc == "2":
         opc2 = ''
