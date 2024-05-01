@@ -40,14 +40,14 @@ class CrudClients(ICrud):
         validar = Valida()
         borrarPantalla()
         print('\033c', end='')
-        gotoxy(2, 1);print(green_color + "*" * 90 + reset_color)
-        gotoxy(30, 2);print(blue_color + "Registro de Clientes")
+        gotoxy(2, 1); print(green_color + "*" * 90 + reset_color)
+        gotoxy(30, 2); print(blue_color + "Registro de Clientes")
 
-        gotoxy(5, 4);print("Nombre: ")
+        gotoxy(5, 4); print("Nombre: ")
         name = validar.solo_letras("Error: Solo letras", 13, 4)
-        gotoxy(5, 5);print("Apellido: ")
+        gotoxy(5, 5); print("Apellido: ")
         lastname = validar.solo_letras("Error: Solo letras", 13, 5)
-        gotoxy(5, 6);print("DNI: ")
+        gotoxy(5, 6); print("DNI: ")
         dni = validar.cedula("Error: Cédula inválida", 13, 6)
 
         # Leer la lista de clientes existentes desde el archivo JSON
@@ -57,14 +57,14 @@ class CrudClients(ICrud):
         # Verificar si la cédula ya está en uso
         for client in clients:
             if client['dni'] == dni:
-                gotoxy(5, 7);print("La cédula ya está registrada para otro cliente.")
+                gotoxy(5, 7); print("La cédula ya está registrada para otro cliente.")
                 input("Presiona Enter para regresar al menú principal")
                 return  # Salir del método si la cédula está duplicada
 
         # Continuar con el registro del nuevo cliente si la cédula no está duplicada
-        gotoxy(5, 7);print("Tipo de cliente:")
-        gotoxy(5, 8);print("1) Cliente Regular")
-        gotoxy(5, 9);print("2) Cliente VIP")
+        gotoxy(5, 7); print("Tipo de cliente:")
+        gotoxy(5, 8); print("1) Cliente Regular")
+        gotoxy(5, 9); print("2) Cliente VIP")
         gotoxy(5, 10)
         tipo_cliente = validar.solo_numeros("Error: Solo números", 27, 7)
 
@@ -76,7 +76,7 @@ class CrudClients(ICrud):
         cliente_tipo = "Regular" if tipo_cliente == "1" else "VIP"
 
         if tipo_cliente == "1":
-            gotoxy(5, 12);print("¿El cliente tiene tarjeta de descuento? (s/n): ")
+            gotoxy(5, 12); print("¿El cliente tiene tarjeta de descuento? (s/n): ")
             card = input().lower() == "s"
             cliente = RegularClient(name, lastname, dni, card)
         else:
@@ -86,17 +86,17 @@ class CrudClients(ICrud):
         clients.append(cliente.getJson())
         json_file.save(clients)
 
-        gotoxy(5, 14);print("Cliente registrado exitosamente!")
+        gotoxy(5, 14); print("Cliente registrado exitosamente!")
         input("Presiona Enter para regresar al menú principal")
 
     def update(self):
         validar = Valida()
         borrarPantalla()
         print('\033c', end = '')
-        gotoxy(2,1);print(green_color + "*" * 90 + reset_color)
-        gotoxy(30,2);print(blue_color + "Actualización de Clientes")
+        gotoxy(2,1); print(green_color + "*" * 90 + reset_color)
+        gotoxy(30,2); print(blue_color + "Actualización de Clientes")
 
-        gotoxy(5,4);print("Ingrese el DNI del cliente a actualizar: ")
+        gotoxy(5,4); print("Ingrese el DNI del cliente a actualizar: ")
         dni = validar.solo_numeros("Error: Solo números", 40, 4)
 
         json_file = JsonFile(path + '/archivos/clients.json')
@@ -106,16 +106,16 @@ class CrudClients(ICrud):
         for client in client_list:
             if client['dni'] == dni:
                 found = True
-                gotoxy(5,5);print("Nombre: ")
+                gotoxy(5,5); print("Nombre: ")
                 new_name = validar.solo_letras("Error: Solo letras", 13, 5)
 
-                gotoxy(5,6);print("Apellido: ")
+                gotoxy(5,6); print("Apellido: ")
                 new_lastname = validar.solo_letras("Error: Solo letras", 13, 6)
 
                 client['nombre'] = new_name
                 client['apellido'] = new_lastname
                 json_file.save(client_list)
-                gotoxy(5,8);print("Cliente actualizado con éxito")
+                gotoxy(5,8); print("Cliente actualizado con éxito")
                 input("Presiona Enter para regresar al menú principal")
                 break
         if not found:
@@ -125,11 +125,10 @@ class CrudClients(ICrud):
         validar = Valida()
         borrarPantalla()
         print('\033c', end='')
-        gotoxy(2, 1)
-        print(green_color + "*" * 90 + reset_color)
-        gotoxy(30, 2);print(blue_color + "Eliminación de Clientes")
+        gotoxy(2, 1); print(green_color + "*" * 90 + reset_color)
+        gotoxy(30, 2); print(blue_color + "Eliminación de Clientes")
 
-        gotoxy(5, 4);print("Ingrese el DNI del cliente a eliminar: ")
+        gotoxy(5, 4); print("Ingrese el DNI del cliente a eliminar: ")
         dni = validar.solo_numeros("Error: Solo números", 40, 4)
 
         json_file = JsonFile(path + '/archivos/clients.json')
@@ -139,21 +138,21 @@ class CrudClients(ICrud):
         for client in clients:
             if client['dni'] == dni:
                 found = True
-                gotoxy(5, 6);print("¿Está seguro de eliminar este cliente? (S/N): ")
+                gotoxy(5, 6); print("¿Está seguro de eliminar este cliente? (S/N): ")
                 confirmacion = input().lower()
                 if confirmacion == "s":
-                    gotoxy(5, 7);print("Por seguridad, escriba 'ELIMINAR' para confirmar la eliminación: ")
+                    gotoxy(5, 7); print("Por seguridad, escriba 'ELIMINAR' para confirmar la eliminación: ")
                     confirmacion_final = input().lower()
 
                     if confirmacion_final == "eliminar":
                         del clients[clients.index(client)]
                         json_file.save(clients)
-                        gotoxy(5, 9);print("Cliente eliminado con éxito")
+                        gotoxy(5, 9); print("Cliente eliminado con éxito")
                         input("Presiona Enter para regresar al menú principal")
                     else:
-                        gotoxy(5, 9);print("Confirmación incorrecta. No se ha eliminado el cliente.")
+                        gotoxy(5, 9); print("Confirmación incorrecta. No se ha eliminado el cliente.")
                 else:
-                    gotoxy(5, 9);print("Operación cancelada.")
+                    gotoxy(5, 9); print("Operación cancelada.")
                 break
         if not found:
             print("Cliente no encontrado.")
@@ -161,10 +160,8 @@ class CrudClients(ICrud):
     def consult(self):
         borrarPantalla()
         print('\033c', end='')
-        gotoxy(2, 1);
-        print(green_color + "*" * 90 + reset_color)
-        gotoxy(30, 2);
-        print(blue_color + "Consulta de Clientes")
+        gotoxy(2, 1); print(green_color + "*" * 90 + reset_color)
+        gotoxy(30, 2); print(blue_color + "Consulta de Clientes")
         print("\n")
         print("Seleccione una opción:")
         print("1) Buscar cliente por DNI")
@@ -176,10 +173,8 @@ class CrudClients(ICrud):
             validar = Valida()
             borrarPantalla()
             print('\033c', end='')
-            gotoxy(2, 1);
-            print(green_color + "*" * 90 + reset_color)
-            gotoxy(30, 2);
-            print(blue_color + "Consulta de Cliente por DNI")
+            gotoxy(2, 1); print(green_color + "*" * 90 + reset_color)
+            gotoxy(30, 2); print(blue_color + "Consulta de Cliente por DNI")
             print("\n")
             dni = validar.solo_numeros("Ingrese el DNI del cliente a buscar: ", 5, 4)
 
@@ -199,10 +194,8 @@ class CrudClients(ICrud):
         elif opcion == "2":
             borrarPantalla()
             print('\033c', end='')
-            gotoxy(2, 1);
-            print(green_color + "*" * 90 + reset_color)
-            gotoxy(30, 2);
-            print(blue_color + "Lista de Todos los Clientes")
+            gotoxy(2, 1); print(green_color + "*" * 90 + reset_color)
+            gotoxy(30, 2); print(blue_color + "Lista de Todos los Clientes")
             print("\n")
             json_file = JsonFile(path + '/archivos/clients.json')
             clients = json_file.read()
