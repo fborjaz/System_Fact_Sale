@@ -9,7 +9,7 @@ from components import Menu, Valida
 from utilities import borrarPantalla, gotoxy, reset_color, red_color, green_color, yellow_color, blue_color, purple_color, cyan_color
 from clsJson import JsonFile
 from company import Company
-from customer import RegularClient
+from customer import RegularClient, VipClient
 from sales import Sale
 from product import Product
 from iCrud import ICrud
@@ -40,22 +40,33 @@ class CrudClients(ICrud):
         validar = Valida()
         borrarPantalla()
         print('\033c', end='')
-        gotoxy(2, 1)
-        print(green_color + "*" * 90 + reset_color)
-        gotoxy(30, 2)
-        print(blue_color + "Registro de Clientes")
+        gotoxy(2, 1);print(green_color + "*" * 90 + reset_color)
+        gotoxy(30, 2);print(blue_color + "Registro de Clientes")
 
-        gotoxy(5, 4)
-        print("Nombre: ");name = validar.solo_letras("Error: Solo letras", 13, 4)
-        gotoxy(5, 5)
-        print("Apellido: ");lastname = validar.solo_letras("Error: Solo letras", 13, 5)
-        gotoxy(5, 6)
-        print("DNI: ");dni = validar.cedula("Error: Cédula inválida", 13, 6)
+        gotoxy(5, 4);print("Nombre: ")
+        name = validar.solo_letras("Error: Solo letras", 13, 4)
+        gotoxy(5, 5);print("Apellido: ")
+        lastname = validar.solo_letras("Error: Solo letras", 13, 5)
+        gotoxy(5, 6);print("DNI: ")
+        dni = validar.cedula("Error: Cédula inválida", 13, 6)
 
+        # Leer la lista de clientes existentes desde el archivo JSON
+        json_file = JsonFile(path + '/archivos/clients.json')
+        clients = json_file.read()
+
+        # Verificar si la cédula ya está en uso
+        for client in clients:
+            if client['dni'] == dni:
+                gotoxy(5, 7);print("La cédula ya está registrada para otro cliente.")
+                input("Presiona Enter para regresar al menú principal")
+                return  # Salir del método si la cédula está duplicada
+
+        # Continuar con el registro del nuevo cliente si la cédula no está duplicada
         gotoxy(5, 7);print("Tipo de cliente:")
         gotoxy(5, 8);print("1) Cliente Regular")
         gotoxy(5, 9);print("2) Cliente VIP")
-        gotoxy(5, 10);tipo_cliente = validar.solo_numeros("Error: Solo números", 27, 7)
+        gotoxy(5, 10)
+        tipo_cliente = validar.solo_numeros("Error: Solo números", 27, 7)
 
         while tipo_cliente not in {"1", "2"}:
             gotoxy(5, 11)
@@ -65,15 +76,13 @@ class CrudClients(ICrud):
         cliente_tipo = "Regular" if tipo_cliente == "1" else "VIP"
 
         if tipo_cliente == "1":
-            gotoxy(5, 12)
-            print("¿El cliente tiene tarjeta de descuento? (s/n): ")
+            gotoxy(5, 12);print("¿El cliente tiene tarjeta de descuento? (s/n): ")
             card = input().lower() == "s"
             cliente = RegularClient(name, lastname, dni, card)
         else:
             cliente = VipClient(name, lastname, dni)
 
-        json_file = JsonFile(path + '/archivos/clients.json')
-        clients = json_file.read()
+        # Agregar el nuevo cliente a la lista de clientes y guardar en el archivo JSON
         clients.append(cliente.getJson())
         json_file.save(clients)
 
