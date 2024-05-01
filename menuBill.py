@@ -368,9 +368,61 @@ class CrudProducts(ICrud):
         else:
             gotoxy(5, len(products) + 8)
             print("Producto no encontrado.")
+            input("\nPresione Enter para regresar al menú principal...")
 
     def consult(self):
-        pass
+        validar = Valida()
+        borrarPantalla()
+        print('\033c', end='')
+        gotoxy(2, 1)
+        print(green_color + "*" * 90 + reset_color)
+        gotoxy(30, 2)
+        print(blue_color + "Consulta de Productos")
+
+        # Mostrar las opciones para consultar
+        print("Seleccione una opción:")
+        print("1) Mostrar todos los productos")
+        print("2) Buscar un producto por ID")
+
+        option = input("Ingrese su opción (1 o 2): ")
+
+        # Obtener la lista de productos
+        json_file = JsonFile(path + '/archivos/products.json')
+        products = json_file.read()
+
+        if option == "1":
+            # Mostrar todos los productos con sus IDs
+            print("Lista de Productos:")
+            for idx, product in enumerate(products):
+                gotoxy(5, 4 + idx)
+                print(
+                    f"ID: {product['id']} | Descripción: {product['descripcion']} | Precio: {product['precio']} | Stock: {product['stock']}")
+
+        elif option == "2":
+            # Ingresar ID del producto a buscar
+            gotoxy(5, 4)
+            print("Ingrese el ID del producto a buscar: ")
+            product_id = validar.solo_numeros("Error: Solo números", 40, 4)
+
+            # Buscar el producto por su ID
+            found = False
+            for product in products:
+                if product['id'] == product_id:
+                    found = True
+                    gotoxy(5, 6)
+                    print(
+                        f"ID: {product['id']} | Descripción: {product['descripcion']} | Precio: {product['precio']} | Stock: {product['stock']}")
+                    break
+
+            if not found:
+                gotoxy(5, 6)
+                print("Producto no encontrado.")
+
+        else:
+            gotoxy(5, 6)
+            print("Opción no válida.")
+
+        input("\nPresione Enter para regresar al menú principal...")
 
 # Clase de registro de ventas
 class CrudSales(ICrud):
@@ -532,7 +584,8 @@ while opc != '4':
             elif opc2 == "3":
                 Products.delete()
             elif opc2 == "4":
-                pass
+                Products.consult()
+                time.sleep(2)
             print("Regresando al menu Productos...")
             time.sleep(2)
     # Menu de Ventas
