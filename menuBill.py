@@ -58,6 +58,7 @@ class CrudClients(ICrud):
         json_file.save(clients)
 
         gotoxy(5,8);print("Cliente grabado con éxito")
+        input("Presiona Enter para regresar al menú principal")
 
     def update(self):
         validar = Valida()
@@ -86,6 +87,7 @@ class CrudClients(ICrud):
                 client['apellido'] = new_lastname
                 json_file.save(client_list)
                 gotoxy(5,8);print("Cliente actualizado con éxito")
+                input("Presiona Enter para regresar al menú principal")
                 break
         if not found:
             print("Cliente no encontrado.")
@@ -118,6 +120,7 @@ class CrudClients(ICrud):
                         del clients[clients.index(client)]
                         json_file.save(clients)
                         gotoxy(5, 9);print("Cliente eliminado con éxito")
+                        input("Presiona Enter para regresar al menú principal")
                     else:
                         gotoxy(5, 9);print("Confirmación incorrecta. No se ha eliminado el cliente.")
                 else:
@@ -159,6 +162,7 @@ class CrudClients(ICrud):
                     found = True
                     print("Cliente encontrado:")
                     print(f"Nombre: {client['nombre']} | Apellido: {client['apellido']} | DNI: {client['dni']}")
+                    input("Presiona Enter para regresar al menú principal")
                     break
             if not found:
                 print("Cliente no encontrado.")
@@ -177,6 +181,7 @@ class CrudClients(ICrud):
             for idx, client in enumerate(clients):
                 gotoxy(5, 4 + idx);
                 print(f"Nombre: {client['nombre']} | Apellido: {client['apellido']} | DNI: {client['dni']}")
+                input("Presiona Enter para regresar al menú principal")
 
         else:
             print("Opción no válida.")
@@ -216,6 +221,7 @@ class CrudProducts(ICrud):
             json.dump(products, file)
 
         gotoxy(5, 8);print("Producto registrado con éxito")
+        input("Presiona Enter para regresar al menú principal")
 
     def update(self):
         validar = Valida()
@@ -264,6 +270,7 @@ class CrudProducts(ICrud):
 
                 gotoxy(5, 10)
                 print("Producto actualizado con éxito.")
+                input("Presiona Enter para regresar al menú principal")
             else:
                 gotoxy(5, 10)
                 print("Producto no encontrado.")
@@ -303,6 +310,7 @@ class CrudProducts(ICrud):
 
                 gotoxy(5, len(products) + 10)
                 print("Producto actualizado con éxito.")
+                input("Presiona Enter para regresar al menú principal")
             else:
                 gotoxy(5, len(products) + 10)
                 print("Producto no encontrado.")
@@ -359,6 +367,7 @@ class CrudProducts(ICrud):
                     json_file.save(products)
                     gotoxy(5, len(products) + 8)
                     print("Producto eliminado con éxito.")
+                    input("Presiona Enter para regresar al menú principal")
                 else:
                     gotoxy(5, len(products) + 8)
                     print("Eliminación cancelada.")
