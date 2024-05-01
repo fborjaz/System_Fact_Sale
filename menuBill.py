@@ -111,7 +111,7 @@ class CrudClients(ICrud):
                 gotoxy(5, 6);print("¿Está seguro de eliminar este cliente? (S/N): ")
                 confirmacion = input().lower()
                 if confirmacion == "s":
-                    gotoxy(5, 7);print("Escriba 'ELIMINAR' para confirmar: ")
+                    gotoxy(5, 7);print("Por seguridad, escriba 'ELIMINAR' para confirmar la eliminación: ")
                     confirmacion_final = input().lower()
 
                     if confirmacion_final == "eliminar":
@@ -318,7 +318,56 @@ class CrudProducts(ICrud):
         return None
 
     def delete(self):
-        pass
+        validar = Valida()
+        borrarPantalla()
+        print('\033c', end='')
+        gotoxy(2, 1)
+        print(green_color + "*" * 90 + reset_color)
+        gotoxy(30, 2)
+        print(blue_color + "Eliminación de Producto")
+
+        # Obtener la lista de productos
+        json_file = JsonFile(path + '/archivos/products.json')
+        products = json_file.read()
+
+        # Mostrar todos los productos con sus IDs
+        print("Lista de Productos:")
+        for idx, product in enumerate(products):
+            gotoxy(5, 4 + idx)
+            print(
+                f"ID: {product['id']} | Descripción: {product['descripcion']} | Precio: {product['precio']} | Stock: {product['stock']}")
+
+        # Solicitar el ID del producto a eliminar
+        gotoxy(5, len(products) + 5)
+        print("Ingrese el ID del producto a eliminar: ")
+        product_id = validar.solo_numeros("Error: Solo números", 45, len(products) + 5)
+
+        # Convertir el ID ingresado a entero
+        product_id = int(product_id)
+
+        # Buscar el producto por su ID
+        found_product = self.buscar_producto_por_id(products, product_id)
+        if found_product:
+            # Confirmar la eliminación del producto
+            confirmacion = input("¿Está seguro de que desea eliminar este producto? (s/n): ").lower()
+            if confirmacion == "s":
+                confirmacion_final = input("Por seguridad, escriba 'ELIMINAR' para confirmar la eliminación: ").lower()
+                if confirmacion_final == "eliminar":
+                    # Eliminar el producto de la lista
+                    products.remove(found_product)
+                    # Guardar la lista actualizada en el archivo JSON
+                    json_file.save(products)
+                    gotoxy(5, len(products) + 8)
+                    print("Producto eliminado con éxito.")
+                else:
+                    gotoxy(5, len(products) + 8)
+                    print("Eliminación cancelada.")
+            else:
+                gotoxy(5, len(products) + 8)
+                print("Eliminación cancelada.")
+        else:
+            gotoxy(5, len(products) + 8)
+            print("Producto no encontrado.")
 
     def consult(self):
         pass
@@ -481,7 +530,7 @@ while opc != '4':
             elif opc2 == "2":
                 Products.update()
             elif opc2 == "3":
-                pass
+                Products.delete()
             elif opc2 == "4":
                 pass
             print("Regresando al menu Productos...")
