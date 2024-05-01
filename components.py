@@ -40,6 +40,16 @@ class Valida:
                 print(" " * 20)
         return valor
 
+    # Proceso recursivo
+    def solo_numeros_recursivo(self, mensajeError, col, fil):
+        valor = input("        ------>   | {} ".format("Ingrese solo números: "))
+        try:
+            if int(valor) > 0:
+                return valor
+        except ValueError:
+            print(mensajeError)
+            return self.solo_numeros_recursivo(mensajeError, col, fil)
+
     def solo_letras(self, mensajeError, col, fil):
         while True:
             gotoxy(col, fil)
