@@ -38,26 +38,52 @@ class CrudClients(ICrud):
     def create(self):
         validar = Valida()
         borrarPantalla()
-        print('\033c', end = '')
-        gotoxy(2,1);print(green_color + "*" * 90 + reset_color)
-        gotoxy(30,2);print(blue_color + "Registro de Clientes")
-        #gotoxy(17,3);print(blue_color + Company.get_business_name()) # Muestra nombre de la empresa
+        print('\033c', end='')
+        gotoxy(2, 1)
+        print(green_color + "*" * 90 + reset_color)
+        gotoxy(30, 2)
+        print(blue_color + "Registro de Clientes")
 
-        gotoxy(5,4);print("Nombre: ")
+        gotoxy(5, 4)
+        print("Nombre: ")
         name = validar.solo_letras("Error: Solo letras", 13, 4)
-        gotoxy(5,5);print("Apellido: ")
+        gotoxy(5, 5)
+        print("Apellido: ")
         lastname = validar.solo_letras("Error: Solo letras", 13, 5)
-        gotoxy(5,6);print("DNI: ")
+        gotoxy(5, 6)
+        print("DNI: ")
         dni = validar.solo_numeros("Error: Solo números", 13, 6)
 
-        new_client = {"nombre": name, "apellido": lastname, "dni": dni}
+        gotoxy(5, 7)
+        print("Tipo de cliente:")
+        gotoxy(5, 8)
+        print("1) Cliente Regular")
+        gotoxy(5, 9)
+        print("2) Cliente VIP")
+        gotoxy(5, 10)
+        tipo_cliente = validar.solo_numeros("Error: Solo números", 27, 7)
+        while tipo_cliente not in {"1", "2"}:
+            gotoxy(5, 11)
+            print("Opción inválida. Intente de nuevo.")
+            tipo_cliente = validar.solo_numeros("Error: Solo números", 27, 7)
+
+        cliente_tipo = "Regular" if tipo_cliente == "1" else "VIP"
+
+        if tipo_cliente == "1":
+            gotoxy(5, 12)
+            print("¿El cliente tiene tarjeta de descuento? (s/n): ")
+            card = input().lower() == "s"
+            cliente = RegularClient(name, lastname, dni, card)
+        else:
+            cliente = VipClient(name, lastname, dni)
 
         json_file = JsonFile(path + '/archivos/clients.json')
         clients = json_file.read()
-        clients.append(new_client)
+        clients.append(cliente.getJson())
         json_file.save(clients)
 
-        gotoxy(5,8);print("Cliente grabado con éxito")
+        gotoxy(5, 14)
+        print("Cliente registrado exitosamente!")
         input("Presiona Enter para regresar al menú principal")
 
     def update(self):
@@ -181,7 +207,8 @@ class CrudClients(ICrud):
             for idx, client in enumerate(clients):
                 gotoxy(5, 4 + idx);
                 print(f"Nombre: {client['nombre']} | Apellido: {client['apellido']} | DNI: {client['dni']}")
-                input("Presiona Enter para regresar al menú principal")
+
+            input("Presiona Enter para regresar al menú principal")
 
         else:
             print("Opción no válida.")
