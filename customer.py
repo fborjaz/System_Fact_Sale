@@ -58,7 +58,7 @@ class RegularClient(Client):
 
 
 class VipClient(Client):
-    def __init__(self, first_name = "Consumidor", last_name = "Final", dni = "9999999999"):
+    def __init__(self, first_name="Consumidor", last_name="Final", dni="9999999999"):
         # Método constructor para inicializar los atributos de la clase VipClient
         super().__init__(first_name, last_name, dni)  # Llama al constructor de la clase padre
         self.__limit = 10000  # Límite de crédito del cliente VIP
